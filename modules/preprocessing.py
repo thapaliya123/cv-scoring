@@ -8,6 +8,8 @@ import spacy
 import nltk
 import string as st
 from nltk.stem import WordNetLemmatizer
+
+nltk.download("wordnet")
 # load small spacy model
 nlp = spacy.load("en_core_web_sm")
 
