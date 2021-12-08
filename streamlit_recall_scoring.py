@@ -141,4 +141,5 @@ try:
 
 except Exception as e:
     print(e)
+    stm.write(e)
     stm.exception("SOME PROBLEM OCCURED")
