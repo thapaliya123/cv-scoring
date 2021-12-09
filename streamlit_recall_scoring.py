@@ -183,6 +183,6 @@ try:
     delete_directory(uploaded_files_dir)
 
 except Exception as e:
-    print(e)
-    stm.write(e)
+    # print(e)
+    # stm.write(e)
     stm.exception("SOME PROBLEM OCCURED")
