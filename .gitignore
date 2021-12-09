@@ -2,9 +2,9 @@ data
 parser.ipynb
 streamlit_counvec_scoring.py
 Testing-Skills.ipynb  
-.venv  
-skill_db_relax_20.json
-token_dist.json
+venv  
+.skill_db_relax_20.json
+.token_dist.json
 .ipynb_checkpoints
 __pycache__/
 
