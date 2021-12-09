@@ -2,7 +2,7 @@
 
 CV scoring is an app that scores the CV/Resume based on the Job Descriptions. If the CV matches with the Job Descriptions then score will be high and for unmatched CV score will be low. In the first version of CV scoring Recall is used for generating score based on CV and JD (job descriptions). For perfectly matched Recall score will be 1 and for perfectly unmatched recall score will be 0. In General Recall score is in between 0 to 1. The overall pipeline is as shown:  
 
-<img src = "images/1.jpg" width = "500">
+<img src = "images/1.jpg" width = "600">
 
 **Steps:**
 
