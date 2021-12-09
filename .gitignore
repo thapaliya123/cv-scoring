@@ -5,5 +5,5 @@ Testing-Skills.ipynb
 venv  
 skill_db_relax_20.json
 token_dist.json
-**/*.ipynb_checkpoints/  
+.ipynb_checkpoints
 __pycache__
