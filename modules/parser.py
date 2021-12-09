@@ -9,49 +9,62 @@ from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 import docx2txt
 import pickle
+import fitz
 
 # set path
 model_path = './models/segment_identifier.pkl'
 
+# def extract_text_from_pdf(pdf_path):
+#     '''
+#     Helper function to extract the plain text from .pdf files
+#     :param pdf_path: path to PDF file to be extracted
+#     :return: iterator of string of extracted text
+#     '''
+#     if str(type(pdf_path)) == "<class 'str'>":
+#         with open(pdf_path, 'rb') as fh:
+#             for page in PDFPage.get_pages(fh, 
+#                                         caching=True,
+#                                         check_extractable=True):
+#                 resource_manager = PDFResourceManager()
+#                 fake_file_handle = io.StringIO()
+#                 converter = TextConverter(resource_manager, fake_file_handle, codec='utf-8', laparams=LAParams())
+#                 page_interpreter = PDFPageInterpreter(resource_manager, converter)
+#                 page_interpreter.process_page(page)
+    
+#                 text = fake_file_handle.getvalue()
+#                 yield text
+    
+#                 # close open handles
+#                 converter.close()
+#                 fake_file_handle.close()
+#     else:
+#         for page in PDFPage.get_pages(pdf_path, 
+#                                         caching=True,
+#                                         check_extractable=True):
+#                 resource_manager = PDFResourceManager()
+#                 fake_file_handle = io.StringIO()
+#                 converter = TextConverter(resource_manager, fake_file_handle, codec='utf-8', laparams=LAParams())
+#                 page_interpreter = PDFPageInterpreter(resource_manager, converter)
+#                 page_interpreter.process_page(page)
+    
+#                 text = fake_file_handle.getvalue()
+#                 yield text
+    
+#                 # close open handles
+#                 converter.close()
+#                 fake_file_handle.close()
+
+# Fitz Parser
 def extract_text_from_pdf(pdf_path):
     '''
-    Helper function to extract the plain text from .pdf files
+    Helper function to extract the plain text from .pdf files using fitz parser
     :param pdf_path: path to PDF file to be extracted
     :return: iterator of string of extracted text
     '''
-    if type(pdf_path) == "<class 'str'>":
-        with open(pdf_path, 'rb') as fh:
-            for page in PDFPage.get_pages(fh, 
-                                        caching=True,
-                                        check_extractable=True):
-                resource_manager = PDFResourceManager()
-                fake_file_handle = io.StringIO()
-                converter = TextConverter(resource_manager, fake_file_handle, codec='utf-8', laparams=LAParams())
-                page_interpreter = PDFPageInterpreter(resource_manager, converter)
-                page_interpreter.process_page(page)
+    doc = fitz.open(pdf_path) 
     
-                text = fake_file_handle.getvalue()
-                yield text
-    
-                # close open handles
-                converter.close()
-                fake_file_handle.close()
-    else:
-        for page in PDFPage.get_pages(pdf_path, 
-                                        caching=True,
-                                        check_extractable=True):
-                resource_manager = PDFResourceManager()
-                fake_file_handle = io.StringIO()
-                converter = TextConverter(resource_manager, fake_file_handle, codec='utf-8', laparams=LAParams())
-                page_interpreter = PDFPageInterpreter(resource_manager, converter)
-                page_interpreter.process_page(page)
-    
-                text = fake_file_handle.getvalue()
-                yield text
-    
-                # close open handles
-                converter.close()
-                fake_file_handle.close()
+    for page in doc:
+        yield (page.get_text("text", sort=True))
 
 def extract_text_from_doc(doc_path):
     '''

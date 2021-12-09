@@ -1,3 +1,5 @@
+import os
+import shutil
 import time
 import string as st
 from typing import Iterable
@@ -25,7 +27,33 @@ nlp = spacy.load("en_core_web_sm")
 jd_file_type = ".pdf"
 cv_file_type = ".pdf"
 jd_skills = ""
+uploaded_files_dir = "./uploaded_files/"
 
+def save_uploaded_file(uploaded_file, dir, file_name):
+    """
+    save uploaded files by user in the passed directory with passed filenames
+
+    Arguments:
+    uploaded_file: file uploaded by user
+    dir: path of directory to store uploaded file
+    file_name: file_name to store uploaded file 
+    """
+    with open(dir + file_name, 'wb+') as f:
+            f.write(uploaded_file.getbuffer())
+
+def make_directory(path):
+    """
+    create directory on the given path
+    """
+    os.mkdir(path)
+
+def delete_directory(path):
+    """
+    delete files/dir using the path passed as an argument
+    """
+    if os.path.exists(path):
+        # remove if exists
+        shutil.rmtree(path)
 
 def process_pdf_generate_score(uploaded_file):
     """
@@ -43,8 +71,13 @@ def process_pdf_generate_score(uploaded_file):
 
     # get file name via uploaded pdf
     file_name = uploaded_file.name
+
+    # buffer uploaded files
+    save_uploaded_file(uploaded_file, uploaded_files_dir, file_name)
+
     # extract from CV
-    cv  = extract_text(uploaded_file, cv_file_type)
+    cv = extract_text(uploaded_files_dir + file_name, cv_file_type)
+    # cv  = extract_text(uploaded_file, cv_file_type)
 
     # cv segmentation and preprocessing
     segmented_cv_info = format_segment(cv)
@@ -77,8 +110,15 @@ try:
     # input JD pdf file
     jd_file = stm.file_uploader("Select JD pdf file")
     if jd_file is not None:
+        # make directory
+        make_directory(uploaded_files_dir)
+        
+        # save uploaded file
+        save_uploaded_file(jd_file, uploaded_files_dir, "jd.pdf")
+        
         # extract jd text
-        jd = extract_text(jd_file, jd_file_type)
+        jd = extract_text(uploaded_files_dir + 'jd.pdf', jd_file_type)
+        # jd = extract_text(jd_file, jd_file_type)
         # preprocess extracted jd text
         clean_jd = " ".join(preprocess_text(jd))
 
@@ -88,8 +128,7 @@ try:
         jd_hard_skills, jd_soft_skills = hard_soft_skills['Hard Skill'], hard_soft_skills['Soft Skill']
         # concatenate jd_hard_skills and jd_soft_skills that represent jd skills 
         jd_skills = jd_hard_skills + jd_soft_skills
-      
-    
+
         # create radio button to grab user choice whether to hard and soft skills
         selected = stm.radio("Do you want to see extracted JD's Hard and Soft Skills?", ("yes", "no"), index = 1)
         if selected == "yes":
@@ -109,6 +148,7 @@ try:
             # process uploaded cv and generate recall score based on jd skills
             # start_time = time.time()
             cv_score_with_skills = [process_pdf_generate_score(uploaded_cv_files[0])]
+
             # end_time = time.time()
             # print(end_time - start_time, "sec")
 
@@ -138,6 +178,9 @@ try:
         cv_score_with_skills = pd.DataFrame(cv_score_with_skills, columns=["Name", "Skills", "Score"])
         # display dataframe
         stm.write(cv_score_with_skills)
+
+    # delete uploaded files directory
+    delete_directory(uploaded_files_dir)
 
 except Exception as e:
     print(e)
